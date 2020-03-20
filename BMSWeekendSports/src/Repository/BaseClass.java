@@ -3,7 +3,6 @@ package Repository;
 import Models.SportsDetail;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,7 +11,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +32,7 @@ public class BaseClass {
 
     public static void login() throws InterruptedException {
         driver.get("https://in.bookmyshow.com/bengaluru/sports?dayGroup=Weekend&priceGroup=min0max500");
+        Thread.sleep(2000);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.manage().window().maximize();
     }
@@ -49,13 +49,15 @@ public class BaseClass {
         for(int i = 0; i < totalEvents.size(); i++){
             SportsDetail sportsDetail = new SportsDetail();
             sportsDetail.set_day(day.get(i).getText());
-            sportsDetail.set_amount(price.get(i).getText());
+            sportsDetail.set_amount(Integer.parseInt(price.get(i).getText().replace("Rs. ", "")));
             sportsDetail.set_month(month.get(i).getText());
             sportsDetail.set_category(category.get(i).getText());
             sportsDetail.set_name(name.get(i).getText());
 
             eventDetails.add(sportsDetail);
         }
+        Collections.sort(eventDetails,new EventsComparator());
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(new File("EventsData.json"), eventDetails);
 

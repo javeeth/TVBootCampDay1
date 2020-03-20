@@ -5,11 +5,7 @@ public class SportsDetail {
     private String _month;
     private String _day;
     private String _category;
-    private String _amount;
-
-
-    public SportsDetail() {
-    }
+    private int _amount;
 
     public String get_name() {
         return _name;
@@ -43,11 +39,11 @@ public class SportsDetail {
         this._category = _category;
     }
 
-    public String get_amount() {
+    public int get_amount() {
         return _amount;
     }
 
-    public void set_amount(String _amount) {
+    public void set_amount(int _amount) {
         this._amount = _amount;
     }
 }
