@@ -1,11 +1,17 @@
 package Repository;
 
 import Models.SportsDetail;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -14,10 +20,10 @@ public class BaseClass {
 
     static WebDriver driver = new ChromeDriver();
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         setDriverProperty();
         login();
-        getPrice();
+        getDetails();
         closeDriver();
     }
 
@@ -31,8 +37,8 @@ public class BaseClass {
         driver.manage().window().maximize();
     }
 
-    public static void getPrice(){
-        HashSet<SportsDetail> eventDetails = null;
+    public static void getDetails() throws JsonMappingException, IOException {
+        List<SportsDetail> eventDetails = new ArrayList<>();
         List<WebElement> totalEvents = driver.findElements(By.xpath("//div[@class = 'ax c es et eu ev k v']"));
         List<WebElement> price = driver.findElements(By.xpath("//div[contains(@class, 'bd fd fe')]"));
         List<WebElement> day = driver.findElements(By.xpath("//div[@class = 'bd ey']"));
@@ -50,6 +56,9 @@ public class BaseClass {
 
             eventDetails.add(sportsDetail);
         }
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(new File("EventsData.json"), eventDetails);
+
     }
 
     public static void closeDriver(){
