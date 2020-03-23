@@ -1,23 +1,17 @@
 package repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import models.SportsDetail;
 import models.SportsDetailList;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
 import org.testng.annotations.*;
 import pageObject.BMSEvent;
 import pageObject.BasePage;
 import utility.FileConstant;
-import utility.WebElements;
+import utility.Utilities;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class BMSEventsTest extends BasePage {
 
@@ -30,43 +24,18 @@ public class BMSEventsTest extends BasePage {
     }
 
     @Test
-    void getEventsDetail() throws IOException {
-
-        List<SportsDetail> eventDetails = new ArrayList<SportsDetail>();
-        List<WebElement> totalEvents = bmsEvent.findElements(WebElements.totalEventXpath);
-        List<WebElement> price = bmsEvent.findElements(WebElements.eventPriceXpath);
-        List<WebElement> day = bmsEvent.findElements(WebElements.eventDayXpath);
-        List<WebElement> month = bmsEvent.findElements(WebElements.eventMonthXpath);
-        List<WebElement> category = bmsEvent.findElements(WebElements.eventCategoryXpath);
-        List<WebElement> name = bmsEvent.findElements(WebElements.eventNameXpath);
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        if(totalEvents.size() > 0){
-            for(int i = 0; i < totalEvents.size(); i++){
-                SportsDetail sportsDetail = new SportsDetail();
-                sportsDetail.setDay(day.get(i).getText());
-                sportsDetail.setAmount(Integer.parseInt(price.get(i).getText().replace("Rs. ", "")));
-                sportsDetail.setMonth(month.get(i).getText());
-                sportsDetail.setCategory(category.get(i).getText());
-                sportsDetail.setName(name.get(i).getText());
-
-                eventDetails.add(sportsDetail);
-            }
-            Collections.sort(eventDetails,new EventsComparator());
-        }
-
-        SportsDetailList sportsDetailList = new SportsDetailList();
-        sportsDetailList.sportsDetailList = eventDetails;
-
-        mapper.writeValue(new File("src/resources/EventsData.json"), sportsDetailList);
+    void validateBMSWeekendEvents() throws IOException {
+        Utilities utilities = new Utilities();
+        SportsDetailList sportsDetailList = bmsEvent.getEvents();
         InputStream input = new FileInputStream(
                 (System.getProperty("user.dir"))
                         + "/src/resources/EventsData.json");
-        sportsDetailList = mapper.readValue(input,
-                SportsDetailList.class);
+        sportsDetailList = utilities.deSerialize(input, SportsDetailList.class);
 
-
+        sportsDetailList.sportsDetailList.stream().forEach((i) ->{
+            Assert.assertTrue(utilities.isWeekend(i.getDay(),i.getMonth()));
+            Assert.assertTrue((i.getAmount() <= 500));
+        });
     }
 
     @AfterTest

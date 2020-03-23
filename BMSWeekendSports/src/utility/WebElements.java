@@ -7,5 +7,4 @@ public class WebElements {
     public static String eventMonthXpath = "//div[@class = 'bd ch ez']";
     public static String eventCategoryXpath = "//div[@class = 'ap bd fe']";
     public static String eventNameXpath = "//div[@class = 'al b ch fb fc']";
-
 }

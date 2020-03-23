@@ -3,7 +3,7 @@ package models;
 public class SportsDetail {
     private String name;
     private String month;
-    private String day;
+    private int day;
     private String category;
     private int amount;
 
@@ -23,11 +23,11 @@ public class SportsDetail {
         this.month = month;
     }
 
-    public String getDay() {
+    public int getDay() {
         return day;
     }
 
-    public void setDay(String day) {
+    public void setDay(int day) {
         this.day = day;
     }
 
