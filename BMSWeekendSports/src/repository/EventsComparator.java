@@ -1,11 +1,11 @@
-package Repository;
+package repository;
 
 import java.util.Comparator;
-import Models.SportsDetail;
+import models.SportsDetail;
 
 public class EventsComparator implements Comparator<SportsDetail> {
 
     public int compare(SportsDetail o1, SportsDetail o2) {
-        return o1.get_amount() - o2.get_amount();
+        return o1.getAmount() - o2.getAmount();
     }
 }
